@@ -1,0 +1,21 @@
+namespace Fisher.Utilities.CentralTraceListener.Model
+{
+    public class LogItemRequest
+    {
+        #region Public Properties
+        public MessageLogItem LogItem { get; set; }
+        public string RequestMessage { get; set; }
+        public bool RequestSuccessful { get; set; }
+        #endregion
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public LogItemRequest()
+        {
+            LogItem = new MessageLogItem();
+            RequestMessage = string.Empty;
+            RequestSuccessful = false;
+        }
+    }
+}
