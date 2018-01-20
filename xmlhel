@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace Fisher.Utilities.CentralTraceListener.Helper
+{
+    public static class XMLHelper
+    {
+        public static XElement FindSection(this XDocument doc, params string[] secNames)
+        {
+            if (doc == null || secNames == null || secNames.Length == 0)
+                return null;
+
+            XElement sec = doc.Element(secNames[0]);
+            for (int i = 1; i < secNames.Length; i++)
+            {
+                if (sec == null)
+                    return null;
+                sec = sec.Element(secNames[i]);
+            }
+            return sec;
+        }
+
+        public static XElement FindSection(this XElement parent, params string[] secNames)
+        {
+            if (parent == null || secNames == null || secNames.Length == 0)
+                return null;
+
+            XElement sec = parent.Element(secNames[0]);
+            for (int i = 1; i < secNames.Length; i++)
+            {
+                if (sec == null)
+                    return null;
+                sec = sec.Element(secNames[i]);
+            }
+            return sec;
+        }
+
+        public static XElement FindDescendant(this XElement parent, string descendant)
+        {
+            return parent?.Descendants(descendant)?.LastOrDefault();
+        }
+
+        public static XElement FindDescendantByName(this XElement parent, string descendant, string descendantName)
+        {
+            return parent?.Descendants(descendant)?.LastOrDefault(d => d.Attribute("name").Value == descendantName);
+        }
+
+
+        public static XElement FindElemntByName(this XElement parentElement, string childElement, string childElementName)
+        {
+            return parentElement
+                    ?.Elements(childElement)
+                        ?.LastOrDefault(s => s.Attribute("name").Value == childElementName);
+        }
+
+        public static string GetAttribute(this XElement element, string attributeName)
+        {
+            return element?.Attribute(attributeName)?.Value;
+        }
+
+        internal static XElement FindTraceListenerFromSection(XElement listenerSec, string listenerName)
+        {
+            if (listenerSec == null || listenerSec.LastNode == null)
+                return null;
+
+            var lastElement = listenerSec.LastNode as XElement;
+
+            while (lastElement != null)
+            {
+                if (lastElement.Name?.LocalName == "clear")
+                    return null;
+                if (lastElement.Name?.LocalName == "remove" &&
+                    lastElement.Attribute("name")?.Value == listenerName)
+                    return null;
+                if (lastElement.Name?.LocalName == "add" &&
+                    lastElement.Attribute("name")?.Value == listenerName)
+                {
+                    return lastElement;
+                }
+                lastElement = lastElement.PreviousNode as XElement;
+            }
+            return null;
+        }
+
+        internal static bool HasAttribute(XElement listener)
+        {
+            if (listener == null)
+                return false;
+            if (listener.Attributes().Count() == 1 && listener.FirstAttribute.Name.LocalName == "name")
+                return false;
+            return true;
+        }
+
+    }
+}
