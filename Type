@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Fisher.Utilities.CentralTraceListener.Helper
+{
+    public static class TypeConverter
+    {
+        public static int? ConvertStringToInt(string val)
+        {
+            if (string.IsNullOrEmpty(val))
+                return null;
+            int valOut;
+            if (int.TryParse(val, out valOut))
+                return valOut;
+            return null;
+        }
+
+        public static T ConvertStringToEnum<T>(string val, T valIfFail) where T : struct
+        {
+            if (string.IsNullOrEmpty(val))
+                return valIfFail;
+            T valOut;
+            if (Enum.TryParse<T>(val, out valOut))
+                return valOut;
+            return valIfFail;
+        }
+
+        public static T? ConvertStringToEnum<T>(string val) where T : struct
+        {
+            if (string.IsNullOrEmpty(val))
+                return null;
+            T valOut;
+            if (Enum.TryParse<T>(val, out valOut))
+                return valOut;
+            return null;
+        }
+
+
+        public static TraceOptions ConvertStringToTraceOptions(string val)
+        {
+            if (string.IsNullOrEmpty(val))
+                return TraceOptions.None;
+
+            var outputOptionList = val.Split(',').ToList();
+            var outputOptions = TraceOptions.None;
+
+            outputOptionList.ForEach(o => outputOptions |= ConvertStringToEnum(o.Trim(), TraceOptions.None));
+            return outputOptions;
+        }
+    }
+}
