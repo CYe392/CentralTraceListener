@@ -1,0 +1,293 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Permissions;
+
+namespace Fisher.Utilities.CentralTraceListener
+{
+    /// <summary>
+    /// This class extends System.Diagnostics.Trace<para />
+    /// Because System.Diagnostics.Trace is sealed, this class is created to "implement" all static properties and methods from System.Diagnostics.Trace, as well as adding custom static tracing methods
+    /// </summary>
+    public class Trace
+    {
+        #region Properties from System.Diagnostics.Trace
+
+        internal static readonly object critSec = new object();
+
+        static string appName;
+        internal static string AppName
+        {
+            get
+            {
+                if (appName == null)
+                {
+                    new EnvironmentPermission(EnvironmentPermissionAccess.Read, "Path").Assert();
+                    appName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                }
+                return appName;
+            }
+        }
+
+        public static bool AutoFlush
+        {
+            get { return System.Diagnostics.Trace.AutoFlush; }
+            set { System.Diagnostics.Trace.AutoFlush = value; }
+        }
+        public static CorrelationManager CorrelationManager
+        {
+            get { return System.Diagnostics.Trace.CorrelationManager; }
+        }
+        public static int IndentLevel
+        {
+            get { return System.Diagnostics.Trace.IndentLevel; }
+            set { System.Diagnostics.Trace.IndentLevel = value; }
+        }
+        public static int IndentSize
+        {
+            get { return System.Diagnostics.Trace.IndentSize; }
+            set { System.Diagnostics.Trace.IndentSize = value; }
+        }
+        public static TraceListenerCollection Listeners
+        {
+            get { return System.Diagnostics.Trace.Listeners; }
+        }
+        public static bool UseGlobalLock
+        {
+            get { return System.Diagnostics.Trace.UseGlobalLock; }
+            set { System.Diagnostics.Trace.UseGlobalLock = value; }
+        }
+        #endregion
+
+        #region public static methods from System.Diagnostics.Trace
+        [Conditional("TRACE")]
+        public static void Assert(bool condition)
+        {
+            System.Diagnostics.Trace.Assert(condition);
+        }
+        [Conditional("TRACE")]
+        public static void Assert(bool condition, string message)
+        {
+            System.Diagnostics.Trace.Assert(condition, message);
+        }
+        [Conditional("TRACE")]
+        public static void Assert(bool condition, string message, string detailMessage)
+        {
+            System.Diagnostics.Trace.Assert(condition, message, detailMessage);
+        }
+        [Conditional("TRACE")]
+        public static void Close()
+        {
+            System.Diagnostics.Trace.Close();
+        }
+        [Conditional("TRACE")]
+        public static void Fail(string message)
+        {
+            System.Diagnostics.Trace.Fail(message);
+        }
+        [Conditional("TRACE")]
+        public static void Fail(string message, string detailMessage)
+        {
+            System.Diagnostics.Trace.Fail(message, detailMessage);
+        }
+        [Conditional("TRACE")]
+        public static void Flush()
+        {
+            System.Diagnostics.Trace.Flush();
+        }
+        [Conditional("TRACE")]
+        public static void Indent()
+        {
+            System.Diagnostics.Trace.Indent();
+        }
+        public static void Refresh()
+        {
+            System.Diagnostics.Trace.Refresh();
+        }
+        [Conditional("TRACE")]
+        public static void TraceError(string message)
+        {
+            System.Diagnostics.Trace.TraceError(message);
+        }
+        [Conditional("TRACE")]
+        public static void TraceError(string format, params object[] args)
+        {
+            System.Diagnostics.Trace.TraceError(format, args);
+        }
+        [Conditional("TRACE")]
+        public static void TraceInformation(string message)
+        {
+            System.Diagnostics.Trace.TraceInformation(message);
+        }
+        [Conditional("TRACE")]
+        public static void TraceInformation(string format, params object[] args)
+        {
+            System.Diagnostics.Trace.TraceInformation(format, args);
+        }
+        [Conditional("TRACE")]
+        public static void TraceWarning(string message)
+        {
+            System.Diagnostics.Trace.TraceWarning(message);
+        }
+        [Conditional("TRACE")]
+        public static void TraceWarning(string format, params object[] args)
+        {
+            System.Diagnostics.Trace.TraceWarning(format, args);
+        }
+        [Conditional("TRACE")]
+        public static void Unindent()
+        {
+            System.Diagnostics.Trace.Unindent();
+        }
+        [Conditional("TRACE")]
+        public static void Write(string message)
+        {
+            System.Diagnostics.Trace.Write(message);
+        }
+        [Conditional("TRACE")]
+        public static void Write(object value)
+        {
+            System.Diagnostics.Trace.Write(value);
+        }
+        [Conditional("TRACE")]
+        public static void Write(string message, string category)
+        {
+            System.Diagnostics.Trace.Write(message, category);
+        }
+        [Conditional("TRACE")]
+        public static void Write(object value, string category)
+        {
+            System.Diagnostics.Trace.Write(value, category);
+        }
+        [Conditional("TRACE")]
+        public static void WriteIf(bool condition, string message)
+        {
+            System.Diagnostics.Trace.WriteIf(condition, message);
+        }
+        [Conditional("TRACE")]
+        public static void WriteIf(bool condition, object value)
+        {
+            System.Diagnostics.Trace.WriteIf(condition, value);
+        }
+        [Conditional("TRACE")]
+        public static void WriteIf(bool condition, object value, string category)
+        {
+            System.Diagnostics.Trace.WriteIf(condition, value, category);
+        }
+        [Conditional("TRACE")]
+        public static void WriteIf(bool condition, string message, string category)
+        {
+            System.Diagnostics.Trace.WriteIf(condition, message, category);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLine(object value)
+        {
+            System.Diagnostics.Trace.WriteLine(value);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLine(string message)
+        {
+            System.Diagnostics.Trace.WriteLine(message);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLine(object value, string category)
+        {
+            System.Diagnostics.Trace.WriteLine(value, category);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLine(string message, string category)
+        {
+            System.Diagnostics.Trace.WriteLine(message, category);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLineIf(bool condition, object value)
+        {
+            System.Diagnostics.Trace.WriteLineIf(condition, value);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLineIf(bool condition, string message)
+        {
+            System.Diagnostics.Trace.WriteLineIf(condition, message);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLineIf(bool condition, object value, string category)
+        {
+            System.Diagnostics.Trace.WriteLineIf(condition, value, category);
+        }
+        [Conditional("TRACE")]
+        public static void WriteLineIf(bool condition, string message, string category)
+        {
+            System.Diagnostics.Trace.WriteLineIf(condition, message, category);
+        }
+        #endregion
+
+        #region public custom static methods
+
+        [Conditional("TRACE")]
+        public static void TraceInformation(int errorNum, string message)
+        {
+            TraceMessage(new TraceEventCache(), AppName, TraceEventType.Information, 0, message, errorNum);
+        }
+        [Conditional("TRACE")]
+        public static void TraceError(int errorNum, string message)
+        {
+            TraceMessage(new TraceEventCache(), AppName, TraceEventType.Error, 0, message, errorNum);
+        }
+        [Conditional("TRACE")]
+        public static void TraceWarning(int errorNum, string message)
+        {
+            TraceMessage(new TraceEventCache(), AppName, TraceEventType.Warning, 0, message, errorNum);
+        }
+
+        #endregion
+
+        #region Private Methods
+        private static void TraceEventByListenerType(TraceListener listener, TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message, int errorNum)
+        {
+            if (listener is Fisher.Utilities.CentralTraceListener.Tracer)
+            {
+                ((Fisher.Utilities.CentralTraceListener.Tracer)listener).TraceEvent(eventCache, AppName, eventType, id, message, errorNum);
+            }
+            else
+            {
+                listener.TraceEvent(eventCache, AppName, eventType, id, message);
+            }
+        }
+
+        private static void TraceMessage(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message, int errorNum)
+        {
+            if (UseGlobalLock)
+            {
+                lock (critSec)
+                {
+                    foreach (TraceListener listener in Listeners)
+                    {
+                        TraceEventByListenerType(listener, eventCache, AppName, eventType, id, message, errorNum);
+                        if (AutoFlush) listener.Flush();
+                    }
+                }
+            }
+            else
+            {
+                foreach (TraceListener listener in Listeners)
+                {
+                    if (!listener.IsThreadSafe)
+                    {
+                        lock (listener)
+                        {
+                            TraceEventByListenerType(listener, eventCache, AppName, eventType, id, message, errorNum);
+                            if (AutoFlush) listener.Flush();
+                        }
+                    }
+                    else
+                    {
+                        TraceEventByListenerType(listener, eventCache, AppName, eventType, id, message, errorNum);
+                        if (AutoFlush) listener.Flush();
+                    }
+                }
+            }
+        }
+
+        #endregion
+    }
+}
