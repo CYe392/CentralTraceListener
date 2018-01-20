@@ -1,0 +1,46 @@
+using Fisher.Utilities.CentralTraceListener.Helper;
+using System;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq;
+
+namespace Fisher.Utilities.CentralTraceListener.Model
+{
+    public class ListenerSetting
+    {
+        public string Name { get; set; }
+        public int? AppId { get; set; }
+        public string Logger { get; set; }
+        public string CentralLogServiceUrl { get; set; }
+        public TraceOptions TraceOutputOptions { get; set; }
+
+        public StringDictionary Attributes { get; set; }
+        public TraceFilter Filter { get; set; }
+
+        public ListenerSetting()
+        {
+            Attributes = new StringDictionary();
+            TraceOutputOptions = TraceOptions.None;
+        }
+
+        public void AppendTraceOutputOption(TraceOptions option)
+        {
+            TraceOutputOptions |= option;
+        }
+
+        public void AppendTraceOutputOption(int option)
+        {
+            if (Enum.IsDefined(typeof(TraceOptions), option))
+                TraceOutputOptions |= (TraceOptions)option;
+        }
+
+        public void AppendTraceOutputOption(string options)
+        {
+            if (string.IsNullOrEmpty(options))
+                return;
+
+            options.Split(',').ToList()
+                .ForEach(o => AppendTraceOutputOption(TypeConverter.ConvertStringToEnum(o.Trim(), TraceOptions.None)));
+        }
+    }
+}
